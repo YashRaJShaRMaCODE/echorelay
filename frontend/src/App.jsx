@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { audioCloseMessage, microphoneErrorMessage } from "./audio-diagnostics.js";
+import { buildDiagnosticReport } from "./diagnostic-report.js";
 import "./App.css";
 
 const CONNECTION_TIMEOUT_MS = 75_000;
@@ -10,6 +11,7 @@ export default function App() {
   const [framesSent, setFramesSent] = useState(0);
   const [framesEchoed, setFramesEchoed] = useState(0);
   const [framesDropped, setFramesDropped] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
   const [inputSignal, setInputSignal] = useState("waiting");
   const [microphones, setMicrophones] = useState([]);
   const [microphoneId, setMicrophoneId] = useState("");
@@ -65,6 +67,23 @@ export default function App() {
     setStatus("ready");
   }, [release]);
 
+  const downloadReport = useCallback(() => {
+    const report = buildDiagnosticReport({
+      capturedAt: new Date().toISOString(),
+      status,
+      networkOnline,
+      framesSent,
+      framesEchoed,
+      framesDropped,
+    });
+    const url = URL.createObjectURL(new Blob([report], { type: "application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `signal-room-diagnostic-${new Date().toISOString().replaceAll(":", "-")}.json`;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }, [framesDropped, framesEchoed, framesSent, networkOnline, status]);
+
   useEffect(() => {
     const updateConnection = () => {
       const online = navigator.onLine;
@@ -103,6 +122,7 @@ export default function App() {
 
   const start = useCallback(async () => {
     const session = ++sessionRef.current;
+    setHasStarted(true);
     setError("");
     setFramesSent(0);
     setFramesEchoed(0);
@@ -291,6 +311,7 @@ export default function App() {
             {!networkOnline ? "Offline" : status === "connecting" ? "Connecting…" : status === "error" ? "Try again" : "Start audio"}
           </button>
           <button className="stop-button" onClick={stop} disabled={status !== "connecting" && status !== "live"}>Stop</button>
+          <button className="stop-button" onClick={downloadReport} disabled={!hasStarted}>Download report</button>
         </div>
         <p className="privacy-note">Your browser will ask for microphone access. Audio is sent only after you press Start; Stop ends the stream and releases the microphone. Reconnection is always manual.</p>
       </section>

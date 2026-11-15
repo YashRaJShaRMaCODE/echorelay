@@ -17,6 +17,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Value("${audio.allowed-origins:http://localhost:5173}")
     private String allowedOrigins;
 
+    @Value("${audio.max-connections:20}")
+    private int maxConnections;
+
     @Bean
     public ServletServerContainerFactoryBean webSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
@@ -26,7 +29,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new AudioWebSocketHandler(), "/ws/audio")
+        registry.addHandler(new AudioWebSocketHandler(maxConnections), "/ws/audio")
                 .setAllowedOrigins(allowedOrigins.split("\\s*,\\s*"));
     }
 }

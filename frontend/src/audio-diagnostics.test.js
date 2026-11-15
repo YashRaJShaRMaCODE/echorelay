@@ -15,7 +15,7 @@ test("provides fallback guidance for unknown microphone failures", () => {
 });
 
 test("maps server close codes to actionable connection diagnostics", () => {
-  assert.match(audioCloseMessage(1008), /frame-rate limit/);
+  assert.match(audioCloseMessage(1008), /frame or data-rate limit/);
   assert.match(audioCloseMessage(1009), /oversized audio frame/);
   assert.match(audioCloseMessage(1006), /internet/);
   assert.match(audioCloseMessage(9999), /closed the session unexpectedly/);

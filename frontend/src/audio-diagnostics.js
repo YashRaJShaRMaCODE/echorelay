@@ -19,7 +19,7 @@ export function microphoneErrorMessage(error) {
 }
 
 export function audioCloseMessage(code) {
-  if (code === 1008) return "Audio server stopped the session because its frame-rate limit was exceeded.";
+  if (code === 1008) return "Audio server stopped the session because its frame or data-rate limit was exceeded.";
   if (code === 1009) return "Audio server rejected an oversized audio frame. Try again with a supported browser.";
   if (code === 1006) return "Audio connection was interrupted. Check your internet and try again.";
   return "Audio server closed the session unexpectedly. Check the connection and try again.";
