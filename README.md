@@ -25,6 +25,8 @@ Signal Room checks the path from a browser microphone to a WebSocket echo server
 
 The backend echoes audio frames for connectivity testing. It does not play the audio back, record it, transcode it, or persist it. Audio is transmitted to the configured server while a session is active; only use non-sensitive test audio. The browser asks for microphone permission before capture starts.
 
+The optional research signup below the tool sends only an email after explicit consent. A separate unchecked option can request related-product links and sends only the product ID after selection. Neither path collects microphone audio, input-device names, or diagnostic counters. Both stay hidden unless the frontend is built with `VITE_LEADHUB_URL` set to the HTTPS LeadHub origin.
+
 The server accepts frames up to 32 KiB, closes a connection that exceeds 30 frames or 256 KiB of audio per rolling second, and allows at most 20 concurrent audio sessions by default. When full, new sockets receive close code `1013` and can be retried later. Set `AUDIO_MAX_CONNECTIONS` to tune the per-instance cap. The origin allowlist controls which browser origins may connect; it is not user authentication or access control. Do not expose this demo as a secure audio service.
 
 ## Run locally
@@ -65,10 +67,12 @@ npm run build
 - **Frontend:** Vercel, with `frontend` as the root directory. `VITE_WS_URL` can override the production WebSocket endpoint.
 - **Backend:** Render Blueprint from `render.yaml`. Set `AUDIO_ALLOWED_ORIGINS` to the exact frontend origin; `/health` is the health check.
 
-The frontend uses HTTPS and connects over WSS. Its Content Security Policy only permits same-origin styles and the configured WebSocket host. The backend is configured on Render Free: it can sleep after 15 minutes idle and take about a minute to wake. Render says Free services are for testing and hobby previews, not production; this deployment is only a demo, even though it uses HTTPS/WSS.
+The frontend uses HTTPS and connects over WSS. Its Content Security Policy permits same-origin styles, the configured WebSocket host, and the `leadhub.onrender.com` origin for consented signup. The backend is configured on Render Free: it can sleep after 15 minutes idle and take about a minute to wake. Render says Free services are for testing and hobby previews, not production; this deployment is only a demo, even though it uses HTTPS/WSS.
 
 ## Product readiness
 
 Signal Room currently checks one browser-to-server audio path. It has no user accounts, team workspaces, service guarantees, customer telemetry or paid plans; the origin allowlist is not authentication. It intentionally does not retain audio. Treat this as a developer demo, not a secure or paid audio-streaming service. A commercial developer tool would still need authenticated sessions, abuse/capacity controls, a tested uptime plan and customer validation before billing.
+
+LeadHub is a research channel only. A paid diagnostic/support offer and developer-team product need customer validation before adding accounts or billing.
 
 `free-for.dev` is useful for discovering CI and hosting offers, but a listed free tier is not a production promise. Verify each provider's current limits before using it for customer traffic.

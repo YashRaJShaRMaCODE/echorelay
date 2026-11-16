@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { audioCloseMessage, microphoneErrorMessage } from "./audio-diagnostics.js";
 import { buildDiagnosticReport } from "./diagnostic-report.js";
+import { LeadHubSignup } from "./components/LeadHubSignup.jsx";
 import "./App.css";
 
 const CONNECTION_TIMEOUT_MS = 75_000;
@@ -315,6 +316,7 @@ export default function App() {
         </div>
         <p className="privacy-note">Your browser will ask for microphone access. Audio is sent only after you press Start; Stop ends the stream and releases the microphone. Reconnection is always manual.</p>
       </section>
+      <LeadHubSignup />
       <footer className="studio-footer"><span>Signal Room</span><span>Audio is not stored by this prototype.</span></footer>
     </main>
   );
